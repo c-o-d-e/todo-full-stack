@@ -29,8 +29,25 @@ router.post("/api/products", async (req, res) => {
     }
 });
 
-/* GET api products */
-router.get("/api/product", async (req, res) => {
+/* UPDATE a product */
+router.put("/api/product/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const product = await Product.findByIdAndUpdate(id, req.body);
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        const updatedProduct = await Product.findById(id);
+        res.status(200).json(updatedProduct);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+/* GET api all products */
+router.get("/api/products", async (req, res) => {
     try {
         const products = await Product.find({});
         res.status(200).json(products);
@@ -40,11 +57,11 @@ router.get("/api/product", async (req, res) => {
 });
 
 /* GET api product based on id*/
-router.get("/api/products/:id", async (req, res) => {
+router.get("/api/product/:id", async (req, res) => {
     try {
         const { id } = req.params;
-        const products = await Product.findById(id);
-        res.status(200).json(products);
+        const product = await Product.findById(id);
+        res.status(200).json(product);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
